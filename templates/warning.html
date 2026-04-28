@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Session Management</title>
+    <style>
+      /* Fake log in page */
+
+        body.light-mode { font-family: Arial; text-align: center; padding-top: 100px; background-color: #f0f2f5; color: #333; }
+        .login-box { background: white; padding: 30px; display: inline-block; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); width: 300px; }
+        input { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; }
+        .btn-login { width: 95%; padding: 10px; background-color: #1877f2; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+
+       /* Hacker Alert Screen */
+        body.dark-mode { background-color: #0d0d0d; color: #ff3333; text-align: center; font-family: 'Courier New', Courier, monospace; padding-top: 100px; margin: 0; }
+        .warning-box { border: 2px solid #ff3333; display: inline-block; padding: 50px; background-color: #000; box-shadow: 0 0 30px rgba(255, 0, 0, 0.5); border-radius: 10px; display: none; }
+        .dark-mode .warning-box { display: inline-block; }
+        .dark-mode .login-box { display: none; }
+        h1 { font-size: 45px; text-transform: uppercase; letter-spacing: 5px; margin-bottom: 20px; text-shadow: 3px 3px #550000; }
+        .btn-back { margin-top: 30px; padding: 12px 25px; background-color: transparent; color: #ff3333; border: 1px solid #ff3333; cursor: pointer; font-weight: bold; transition: all 0.3s; }
+        .btn-back:hover { background-color: #ff3333; color: #000; }
+    </style>
+</head>
+<body id="mainBody" class="light-mode">
+
+    <div class="login-box" id="loginBox">
+        <h3>Session Expired</h3>
+        <p>Please log in again to continue.</p>
+        <input type="text" placeholder="Username">
+        <input type="password" placeholder="Password">
+        <button class="btn-login" onclick="showHacked()">Log In</button>
+    </div>
+
+    <div class="warning-box" id="warningBox">
+        <h1>⚠️ SESSION COMPROMISED ⚠️</h1>
+        <p>You have fallen victim to a <b>Stored XSS</b> attack.</p>
+        <p>The attacker just stole the credentials you entered!</p>
+        <br>
+        <button class="btn-back" onclick="window.location.href='/'">RETURN TO HOME</button>
+    </div>
+
+    <script>
+        function showHacked() {
+           
+            document.getElementById('mainBody').className = 'dark-mode';
+            alert('Attacker just stole your credentials!');
+        }
+    </script>
+</body>
+</html>

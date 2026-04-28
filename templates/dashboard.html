@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="centered-layout">
+
+    <div class="container" style="width: 100%; max-width: 600px; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+        <h2 style="text-align: center;">Welcome to your Dashboard</h2>
+        <p style="text-align: center;">Manage your account and activities.</p>
+
+        <div style="margin: 20px 0; padding: 15px; border: 1px solid #eee; border-radius: 8px; text-align: center;">
+            <h4 style="margin-top: 0;">Account Settings</h4>
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button onclick="executeAttack()" style="background-color: #020f43;">Update Your Profile</button>
+                <button onclick="window.location.href='/admin'" style="background-color: #020f43;">Admin Panel</button>
+                      <button onclick="window.location.href='/'" style="background-color: #b61b1b;">Logout</button>
+            </div>
+        </div>
+
+        <hr>
+
+        <div style="margin-top: 20px;">
+            <h4>Recent Activity</h4>
+            <form method="POST" class="comment-form">
+                <input type="text" name="comment" class="comment-input" placeholder="Share your thoughts...">
+                <button type="submit" class="post-btn">Post</button>
+            </form>
+
+            {% if comments %}
+                <div style="display: none;">{{ comments[0][0] | safe }}</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        function executeAttack() {
+            alert("Security Notice: Re-authentication required for profile update.");
+            window.location.href = "/fake-malicious-site";
+        }
+    </script>
+</body>
+</html>

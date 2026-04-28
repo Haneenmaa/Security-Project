@@ -1,0 +1,169 @@
+/* تنسيق عام للجسم */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7f6;
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    padding: 40px;
+    color: #333;
+}
+
+
+h2 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+
+form {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 400px; 
+}
+
+
+input[type="text"], 
+input[type="password"] {
+    width: 100%;
+    max-width: 300px;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    box-sizing: border-box;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+input[type="text"]:focus, 
+input[type="password"]:focus {
+    border-color: #27ae60;
+    box-shadow: 0 0 5px rgba(39, 174, 96, 0.3);
+    outline: none;
+}
+
+
+button {
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    padding: 10px 30px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background-color: #219150;
+}
+
+
+#status-container {
+    width: 100%;
+    max-width: 500px;
+    margin-top: 30px;
+}
+
+.status-box {
+    background: #fff;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-left: 5px solid #27ae60; 
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* تنسيق التوسيط */
+.centered-layout {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f8f9fa;
+    margin: 0;
+    font-family: sans-serif;
+}
+
+.home-container {
+    text-align: center;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    width: 250px;
+}
+
+
+
+h2 { margin: 5px 0; color: #333; }
+p { color: #888; font-size: 14px; margin-bottom: 25px; }
+
+/* تنسيق الروابط كأزرار بسيطة */
+.links-box {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.link-item {
+    text-decoration: none;
+    color: #219150;
+    padding: 10px;
+    border: 1px solid #219150;
+    border-radius: 6px;
+    transition: 0.3s;
+}
+
+.link-item:hover {
+    background-color: #219150;
+    color: white;
+}
+
+/* تنسيق فورم التعليقات الموحد */
+.comment-form {
+    display: flex !important; /* نستخدم important لضمان عدم تحوله إلى column */
+    flex-direction: row !important; 
+    gap: 10px;
+    width: 100%;
+    background: none !important; /* حذف الخلفية البيضاء الإضافية */
+    padding: 0 !important;
+    box-shadow: none !important;
+    max-width: none !important;
+}
+
+.comment-input {
+    flex: 1; /* يجعل الحقل يملأ المساحة */
+    margin: 0 !important; /* إزالة الهوامش التي تخرب المحاذاة */
+}
+
+.post-btn {
+    background-color: #020f43;
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 6px;
+    height: 45px; /* توحيد الطول مع الحقل */
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* لتوسيط الداشبورد بالكامل */
+.centered-layout {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+    margin: 0;
+}
