@@ -1,5 +1,5 @@
-from flask 
-import Flask, request, redirect, render_template, render_template_string, url_for, sessionimport sqlite3
+from flask import Flask, request, redirect, render_template, url_for, session
+import sqlite3
 import bcrypt
 
 app = Flask(__name__)
