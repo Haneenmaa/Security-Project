@@ -1,6 +1,6 @@
 from flask import Flask, request, redirect, render_template, render_template_string, url_for
 import sqlite3
-import hashlib
+import bcrypt
 
 app = Flask(__name__)
 
@@ -35,17 +35,17 @@ def register():
         username = request.form['username']
         password = request.form['password']
 
-        # VULNERABILITY: Weak Password Storage (MD5)
-        # Using insecure MD5 hashing as required initially
-        hashed = hashlib.md5(password.encode()).hexdigest()
+        # FIX: Strong password hashing using bcrypt
+        hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
         conn = sqlite3.connect('users.db')
         c = conn.cursor()
 
-        # VULNERABILITY: SQL Injection in Registration
-        # Directly embedding input into the query string
-        query = f"INSERT INTO users (username, password, role) VALUES ('{username}', '{hashed}', 'user')"
-        c.execute(query)
+        # FIX: Prevent SQL Injection using parameterized query
+        c.execute(
+            "INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
+            (username, hashed, 'user')
+        )
 
         conn.commit()
         conn.close()
@@ -54,24 +54,25 @@ def register():
     return render_template('register.html')
 
 @app.route('/login', methods=['GET', 'POST'])
-@app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        hashed_pw = hashlib.md5(password.encode()).hexdigest()
 
         conn = sqlite3.connect('users.db')
         c = conn.cursor()
-        query = f"SELECT * FROM users WHERE username='{username}' AND password='{hashed_pw}'"
-        result = c.execute(query).fetchone()
+
+        # FIX: Prevent SQL Injection using parameterized query
+        c.execute("SELECT * FROM users WHERE username = ?", (username,))
+        result = c.fetchone()
         conn.close()
 
-        if result:
-         
+        # FIX: Verify password using bcrypt
+        if result and bcrypt.checkpw(password.encode('utf-8'), result[2].encode('utf-8')):
             return redirect(url_for('dashboard'))
         else:
             return "Login failed!"
+
     return render_template('login.html')
 
 @app.route('/dashboard', methods=['GET', 'POST'])
