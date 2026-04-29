@@ -1,4 +1,5 @@
-from flask import Flask, request, redirect, render_template, render_template_string, url_for, sessionimport sqlite3
+from flask 
+import Flask, request, redirect, render_template, render_template_string, url_for, sessionimport sqlite3
 import bcrypt
 
 app = Flask(__name__)
@@ -93,10 +94,12 @@ def dashboard():
     return render_template('dashboard.html', comments=comments)
 @app.route('/admin')
 def admin():
-    # VULNERABILITY: Broken Access Control
+    # FIX: Access Control
+    if 'role' not in session or session['role'] != 'admin':
+        return "Access Denied!"
+
     conn = sqlite3.connect('users.db')
     c = conn.cursor()
-  
     users = c.execute("SELECT username, password, role FROM users").fetchall()
     conn.close()
 
