@@ -14,6 +14,8 @@ def init_db():
     c.execute('''CREATE TABLE IF NOT EXISTS users 
                  (id INTEGER PRIMARY KEY, username TEXT, password TEXT, role TEXT)''')
     
+    c.execute('''CREATE TABLE IF NOT EXISTS comments
+             (id INTEGER PRIMARY KEY, content TEXT)''')
  
   
     conn.commit()
