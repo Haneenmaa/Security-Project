@@ -1,9 +1,8 @@
-from flask import Flask, request, redirect, render_template, render_template_string, url_for
-import sqlite3
+from flask import Flask, request, redirect, render_template, render_template_string, url_for, sessionimport sqlite3
 import bcrypt
 
 app = Flask(__name__)
-
+app.secret_key = 'secret123'
 
 #  Database Initialization
 
@@ -69,6 +68,7 @@ def login():
 
         # FIX: Verify password using bcrypt
         if result and bcrypt.checkpw(password.encode('utf-8'), result[2].encode('utf-8')):
+            session['role'] = result[3]
             return redirect(url_for('dashboard'))
         else:
             return "Login failed!"
