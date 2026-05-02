@@ -1,10 +1,18 @@
-from flask import Flask, request, redirect, render_template, render_template_string, url_for
+from flask import Flask, request, redirect, render_template, url_for, session
 import sqlite3
-import hashlib
+import bcrypt
+import os
 
 app = Flask(__name__)
+app.secret_key = "demo_secret_key_for_security_project"
 
+USE_HTTPS = os.environ.get("USE_HTTPS") == "1"
 
+app.config.update(
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE='Lax',
+    SESSION_COOKIE_SECURE=USE_HTTPS
+)
 #  Database Initialization
 
 def init_db():
@@ -14,8 +22,16 @@ def init_db():
     c.execute('''CREATE TABLE IF NOT EXISTS users 
                  (id INTEGER PRIMARY KEY, username TEXT, password TEXT, role TEXT)''')
     
- 
+    c.execute('''CREATE TABLE IF NOT EXISTS comments
+                 (id INTEGER PRIMARY KEY, content TEXT)''')
   
+    admin_password = bcrypt.hashpw("Admin@12345".encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
+    c.execute("SELECT * FROM users WHERE username = ?", ("admin",))
+    if not c.fetchone():
+        c.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
+              ("admin", admin_password, "admin"))
+    
     conn.commit()
     conn.close()
 
@@ -35,17 +51,15 @@ def register():
         username = request.form['username']
         password = request.form['password']
 
-        # VULNERABILITY: Weak Password Storage (MD5)
-        # Using insecure MD5 hashing as required initially
-        hashed = hashlib.md5(password.encode()).hexdigest()
+        #Passwords are hashed securely using bcrypt with a unique salt.
+        hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
         conn = sqlite3.connect('users.db')
         c = conn.cursor()
 
-        # VULNERABILITY: SQL Injection in Registration
-        # Directly embedding input into the query string
-        query = f"INSERT INTO users (username, password, role) VALUES ('{username}', '{hashed}', 'user')"
-        c.execute(query)
+        #Parameterized query is used to prevent SQL injection.
+        c.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
+            (username, hashed, "user"))
 
         conn.commit()
         conn.close()
@@ -54,33 +68,41 @@ def register():
     return render_template('register.html')
 
 @app.route('/login', methods=['GET', 'POST'])
-@app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        hashed_pw = hashlib.md5(password.encode()).hexdigest()
 
         conn = sqlite3.connect('users.db')
         c = conn.cursor()
-        query = f"SELECT * FROM users WHERE username='{username}' AND password='{hashed_pw}'"
-        result = c.execute(query).fetchone()
+
+        #Fetch user by username using a parameterized query.
+        result = c.execute("SELECT * FROM users WHERE username=?",
+                           (username,)).fetchone()
+
         conn.close()
 
-        if result:
-         
+        #bcrypt.checkpw verifies the entered password against the stored bcrypt hash.
+        if result and bcrypt.checkpw(password.encode('utf-8'), result[2].encode('utf-8')):
+            session['user_id'] = result[0]
+            session['username'] = result[1]
+            session['role'] = result[3]
             return redirect(url_for('dashboard'))
         else:
             return "Login failed!"
-    return render_template('login.html')
 
+    return render_template('login.html')
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
+
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
     conn = sqlite3.connect('users.db')
     c = conn.cursor()
 
     if request.method == 'POST':
-      # VULNERABILITY: user-generated content is rendered without proper sanitation
+      #User comments are stored in the database. The template escapes output to prevent XSS.
         comment = request.form.get('comment')
         if comment:
             c.execute("INSERT INTO comments (content) VALUES (?)", (comment,))
@@ -89,25 +111,41 @@ def dashboard():
 
     comments = c.execute("SELECT content FROM comments ORDER BY id DESC").fetchall()
     conn.close()
-    return render_template('dashboard.html', comments=comments)
+    return render_template(
+        'dashboard.html',
+        comments=comments,
+        username=session.get('username')
+    )
 @app.route('/admin')
 def admin():
-    # VULNERABILITY: Broken Access Control
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    if session.get('role') != 'admin':
+        return "Access denied: Admins only", 403
+
     conn = sqlite3.connect('users.db')
     c = conn.cursor()
-  
+
     users = c.execute("SELECT username, password, role FROM users").fetchall()
+
     conn.close()
 
     return render_template('admin.html', users=users)
-
 
 @app.route('/fake-malicious-site')
 def fake_site():
     return render_template('warning.html')
 
-# Running the Web
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('home'))
+
+#Running the Web
 
 if __name__ == '__main__':
- 
-    app.run(debug=True, port=5000)
+    if USE_HTTPS:
+        app.run(debug=True, port=5000, ssl_context='adhoc')
+    else:
+        app.run(debug=True, port=5000)
