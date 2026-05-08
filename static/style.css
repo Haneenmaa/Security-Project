@@ -1,4 +1,3 @@
-/* تنسيق عام للجسم */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f4f7f6;
@@ -84,7 +83,6 @@ button:hover {
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-/* تنسيق التوسيط */
 .centered-layout {
     display: flex;
     justify-content: center;
@@ -109,7 +107,6 @@ button:hover {
 h2 { margin: 5px 0; color: #333; }
 p { color: #888; font-size: 14px; margin-bottom: 25px; }
 
-/* تنسيق الروابط كأزرار بسيطة */
 .links-box {
     display: flex;
     flex-direction: column;
@@ -130,21 +127,21 @@ p { color: #888; font-size: 14px; margin-bottom: 25px; }
     color: white;
 }
 
-/* تنسيق فورم التعليقات الموحد */
+
 .comment-form {
-    display: flex !important; /* نستخدم important لضمان عدم تحوله إلى column */
+    display: flex !important; 
     flex-direction: row !important; 
     gap: 10px;
     width: 100%;
-    background: none !important; /* حذف الخلفية البيضاء الإضافية */
+    background: none !important; 
     padding: 0 !important;
     box-shadow: none !important;
     max-width: none !important;
 }
 
 .comment-input {
-    flex: 1; /* يجعل الحقل يملأ المساحة */
-    margin: 0 !important; /* إزالة الهوامش التي تخرب المحاذاة */
+    flex: 1; 
+    margin: 0 !important; 
 }
 
 .post-btn {
@@ -153,12 +150,11 @@ p { color: #888; font-size: 14px; margin-bottom: 25px; }
     border: none;
     padding: 10px 25px;
     border-radius: 6px;
-    height: 45px; /* توحيد الطول مع الحقل */
+    height: 45px; 
     cursor: pointer;
     font-weight: bold;
 }
 
-/* لتوسيط الداشبورد بالكامل */
 .centered-layout {
     display: flex;
     justify-content: center;
